@@ -1,21 +1,28 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import Shape from "./Shape.js";
-import Light from "./Light.js";
+import Montagne from "./Montagne.js";
+import Sol from "./Sol.js";
+import Rock from "./Rock.js";
+import Tree from "./Tree.js";
+import Terrain from "./Terrain.js";
+import Light from "./light.js";
 import * as dat from "dat.gui";
 import Text from "./Text.js";
-// import Spline from "./Spline.js";
 import Chat from "./Chat";
 import AudioDetector from "./AudioDetector";
 import loadObjManager from "./loadObjManager.js";
-
 export default class App {
   constructor() {
     this.renderer = null;
     this.scene = null;
     this.camera = null;
 
-    this.assetsArray = ["asset.gltf", "mountain.gltf", "rock.gltf"];
+    this.assetsArray = [
+      "asset.gltf",
+      "mountain.gltf",
+      "rock.gltf",
+      "tree.gltf",
+    ];
 
     this.gui = new dat.GUI();
 
@@ -24,8 +31,6 @@ export default class App {
     this.chat.addEventListener("speechEnd", this.speechEnd.bind(this));
 
     // init audio detector
-    // this.spline = new Spline();
-
     this.audioDetector = new AudioDetector();
     this.audioDetector.addEventListener(
       "transcriptReady",
@@ -39,11 +44,7 @@ export default class App {
       }
     });
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "s") {
-        this.initTHREE();
-      }
-    });
+    this.initTHREE();
   }
 
   async initTHREE() {
@@ -58,7 +59,7 @@ export default class App {
     );
     // Set camera position
     this.camera.position.z = 20;
-    this.camera.position.y = 50;
+    this.camera.position.y = 9;
     this.camera.position.x = -20;
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
@@ -81,48 +82,50 @@ export default class App {
     this.controls.enable = false;
     this.controls.enableDamping = false;
     this.controls.enablePan = false;
-    this.controls.enableZoom = false;
+    this.controls.enableZoom = true;
 
-    // Create a cube
-    const shape = new Shape(this.scene);
-    this.cube = shape.createCube();
+    this.terrain = new Terrain(this.scene);
+    // this.montagnes = [];
+    // this.tree = [];
+    // this.rock = [];
+    // this.sol = [];
+
+    // const numShapes = 10;
+
+    // // Create a cube
+    // for (let i = 0; i < numShapes; i++) {
+    //   const m = new Montagne(this.scene);
+    //   this.montagnes.push(m);
+    //   const t = new Tree(this.scene);
+    //   this.tree.push(t);
+    //   const r = new Rock(this.scene);
+    //   this.rock.push(r);
+    //   const s = new Sol(this.scene);
+    //   this.sol.push(s);
+    // }
+    // console.log(this.shapes);
+
+    // this.cube = shape.createCube();
 
     // Create a light
-    // this.light = new Light(this.scene);
-    this.light = new THREE.HemisphereLight(0xffffff, 0x4040ff, 1.0);
-
-    this.scene.add(this.light);
-    this.helper = new THREE.HemisphereLight(this.light, 2);
-    this.light.add(this.helper);
-    this.rollup = this.gui.addFolder("Hemisphere");
-    this.rollup.add(this.light, "visible");
-    this.rollup.add(this.light, "intensity", 0.0, 1.0);
-
-    // this.light.createLight();
-    // this.light.gui(this.gui);
+    this.light = new Light(this.scene);
+    this.light.createLight();
+    this.light.gui(this.gui);
 
     // Create a floor
     // shape.createFloor();
 
     const assetsManager = new loadObjManager(this.assetsArray);
     assetsManager.loadAllAssets().then((res) => {
-      this.assets = res;
-
-      const obj = this.assets[0].scene;
-
-      obj.rotation.set(0, Math.PI / 2, 0);
-      obj.position.y = -1.5;
-
-      this.scene.add(obj);
+      this.terrain.createShapes(res);
     });
 
     // Create a text
     this.text = new Text(this.scene);
     this.font = await this.text.loadFont();
     console.log(this.font);
-    this.text.createText("Test", this.font);
+    // this.text.createText("Hello ECAL");
 
-    this.spline;
     // collection de mots
     // const phrase =
     //   "Les cookies nous permettent de personnaliser le contenu et les annonces";
@@ -134,34 +137,55 @@ export default class App {
     // }, 2000);
     this.allMots = [];
 
-    // addEventListener("click", () => {
-    //   //ici
-    //   this.chat.call(this.chat.context);
-    // });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "w") {
-        this.chat.call(this.chat.context);
-      }
+    addEventListener("keydown", (e) => {
+      if (e.key === "w") this.chat.call(this.chat.context);
     });
 
     //
     this.draw();
   }
 
+  // createShapes(assets) {
+  //   for (let i = 0; i < assets.length; i++) {
+  //     const model = assets[i].scene;
+
+  //     model.traverse((child) => {
+  //       if (child.isMesh) {
+  //         child.castShadow = true;
+  //         child.receiveShadow = true;
+  //       }
+  //     });
+  //   }
+
+  //   for (let i = 0; i < this.montagnes.length; i++) {
+  //     this.montagnes[i].montagne(
+  //       assets[1].scene,
+  //       random(-20, 20),
+  //       1,
+  //       random(-100, 100)
+  //     );
+  //   }
+
+  //   for (let i = 0; i < this.tree.length; i++) {
+  //     this.tree[i].tree(assets[3].scene, random(-20, 20), 1, random(-100, 100));
+  //   }
+
+  //   for (let i = 0; i < this.rock.length; i++) {
+  //     this.rock[i].rock(assets[2].scene, random(-20, 20), 1, random(-100, 100));
+  //   }
+
+  //   this.sol[1].sol(assets[0].scene, 0, 0, 0);
+  // }
+
   addWord(word) {
     // const mot = this.words.shift();
     // if (this.words.length <= 0) clearInterval(this.interval);
-    console.log(word);
-    console.log(this.font);
     const text = this.text.createText(word, this.font);
-
     this.allMots.push(text);
     console.log(text);
     this.allMots.forEach((mot, index) => {
-      mot.position.z = (this.allMots.length - 1 - index) * -5;
-      mot.position.x = -10;
-      // mot.position.y = (this.allMots.length - 1 - index) * -1.5;
+      mot.position.z = (this.allMots.length - 1 - index) * -1.5;
+      mot.position.x = (this.allMots.length - 1 - index) * -1.5;
     });
   }
 
@@ -180,7 +204,7 @@ export default class App {
   draw() {
     //this.controls.update();
 
-    // this.light.update();
+    this.light.update();
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(this.draw.bind(this));
   }

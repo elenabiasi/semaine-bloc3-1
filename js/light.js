@@ -6,11 +6,19 @@ export default class Light {
     this.scene = scene;
   }
   createLight() {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight("blue", 1);
+
     this.scene.add(ambientLight);
 
+    console.log(ambientLight);
+
+    // this.hemiLight = new THREE.HemisphereLight("blue", "orange", 0.6);
+    // this.scene.add(this.hemiLight);
+
+    // this.hemiLight.castShadow = true;
+
     //create spotlight
-    this.spotLight = new THREE.SpotLight(0xffffff, 50);
+    this.spotLight = new THREE.SpotLight(0xffffff, 200);
     this.spotLight.position.set(3, 5, 0);
     //create Shadows
     this.spotLight.castShadow = true;
@@ -29,7 +37,7 @@ export default class Light {
 
   gui(gui) {
     const folder = gui.addFolder("Light");
-    folder.add(this.spotLight, "intensity", 0, 100, 0.01);
+    folder.add(this.spotLight, "intensity", 0, 2000, 0.01);
     folder.add(this.spotLight, "angle", 0, Math.PI / 3, 0.01);
     folder.add(this.spotLight.position, "x", -10, 10, 0.001);
     folder.add(this.spotLight.position, "y", -10, 10, 0.001);
