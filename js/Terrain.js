@@ -76,7 +76,7 @@ export default class Terrain {
     const json = await this.loadJson("./../assets/SPLINE.json");
     const vectors = [];
     json.points.forEach((point) => {
-      vectors.push(new THREE.Vector3(-point.z, point.y, point.x));
+      vectors.push(new THREE.Vector3(point.z, point.y, -point.x));
     });
     this.curve = new THREE.CatmullRomCurve3(vectors);
     const points = this.curve.getPoints(100);
