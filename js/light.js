@@ -14,7 +14,7 @@ export default class Light {
 
     this.hemiLight = new THREE.HemisphereLight(
       "rgb(255, 218, 207)",
-      "rgb(207, 218, 255)",
+      "rgb(107, 118, 155)",
       0.5
     );
 
