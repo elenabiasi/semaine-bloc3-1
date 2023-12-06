@@ -24,6 +24,8 @@ export default class App {
       "tree.gltf",
     ];
 
+    this.dep = 0;
+
     this.gui = new dat.GUI();
 
     this.chat = new Chat();
@@ -84,7 +86,13 @@ export default class App {
     this.controls.enablePan = false;
     this.controls.enableZoom = true;
 
-    this.terrain = new Terrain(this.scene);
+    this.terrains = [];
+    this.terrainsVisible = [];
+
+    for (let i = 0; i < 10; i++) {
+      const t = new Terrain(this.scene);
+      this.terrains.push(t);
+    }
     // this.montagnes = [];
     // this.tree = [];
     // this.rock = [];
@@ -117,7 +125,14 @@ export default class App {
 
     const assetsManager = new loadObjManager(this.assetsArray);
     assetsManager.loadAllAssets().then((res) => {
-      this.terrain.createShapes(res);
+      // this.all_assets = res;
+      // this.addTerrain();
+      this.terrains.forEach((terrain) => {
+        terrain.createShapes(res);
+        terrain.group.position.z = 500;
+      });
+      this.addTerrainFirst();
+      this.addTerrain();
     });
 
     // Create a text
@@ -177,6 +192,28 @@ export default class App {
   //   this.sol[1].sol(assets[0].scene, 0, 0, 0);
   // }
 
+  addTerrain() {
+    // this.terrains[0].createShapes(this.all_assets);
+    if (this.terrains.length > 0) {
+      this.shifted = this.terrains.shift();
+      this.shifted.active = true;
+      this.shifted.inc = 200;
+      // this.terrains.push(this.shifted);
+      this.terrainsVisible.push(this.shifted);
+    }
+  }
+
+  addTerrainFirst() {
+    // this.terrains[0].createShapes(this.all_assets);
+    if (this.terrains.length > 0) {
+      this.shifted = this.terrains.shift();
+      this.shifted.active = true;
+      this.shifted.inc = 0;
+      // this.terrains.push(this.shifted);
+      this.terrainsVisible.push(this.shifted);
+    }
+  }
+
   addWord(word) {
     // const mot = this.words.shift();
     // if (this.words.length <= 0) clearInterval(this.interval);
@@ -203,6 +240,25 @@ export default class App {
 
   draw() {
     //this.controls.update();
+
+    for (let i = this.terrainsVisible.length - 1; i >= 0; i--) {
+      const terrain = this.terrainsVisible[i];
+      terrain.update();
+      if (terrain.group.position.z <= -200) {
+        // terrain.active = false;
+        terrain.group.position.z = 500;
+        this.terrains.push(terrain);
+        this.terrainsVisible.splice(i, 1);
+        this.addTerrain();
+      }
+    }
+
+    // if (this.visible_terrain) {
+    //   this.visible_terrain.update();
+    //   if (this.visible_terrain.group.position.z <= -50) {
+    //     this.addTerrain();
+    //   }
+    // }
 
     this.light.update();
     this.renderer.render(this.scene, this.camera);

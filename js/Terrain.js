@@ -3,6 +3,8 @@ import Sol from "./Sol.js";
 import Rock from "./Rock.js";
 import Tree from "./Tree.js";
 
+import * as THREE from "three";
+
 export default class Terrain {
   constructor(scene) {
     this.scene = scene;
@@ -10,21 +12,30 @@ export default class Terrain {
     this.montagnes = [];
     this.tree = [];
     this.rock = [];
-    this.sol = [];
+
+    this.group = new THREE.Object3D();
+    this.active = false;
+    this.scene.add(this.group);
+    this.sol = new Sol(this.scene);
+
+    this.dep = 0;
 
     const numShapes = 10;
 
-    // Create a cube
+    // add shapes
     for (let i = 0; i < numShapes; i++) {
       const m = new Montagne(this.scene);
       this.montagnes.push(m);
+
       const t = new Tree(this.scene);
       this.tree.push(t);
+
       const r = new Rock(this.scene);
       this.rock.push(r);
-      const s = new Sol(this.scene);
-      this.sol.push(s);
+      // console.log(r);
+      // this.group.add(r.scene.firstChild);
     }
+    this.inc = 0;
   }
 
   createShapes(assets) {
@@ -46,16 +57,32 @@ export default class Terrain {
         1,
         random(-100, 100)
       );
+
+      this.group.add(this.montagnes[i].obj);
     }
 
     for (let i = 0; i < this.tree.length; i++) {
       this.tree[i].tree(assets[3].scene, random(-20, 20), 1, random(-100, 100));
+      this.group.add(this.tree[i].obj);
     }
 
     for (let i = 0; i < this.rock.length; i++) {
       this.rock[i].rock(assets[2].scene, random(-20, 20), 1, random(-100, 100));
+      this.group.add(this.rock[i].obj);
     }
 
-    this.sol[1].sol(assets[0].scene, 0, 0, 0);
+    this.sol.sol(assets[0].scene, 0, 0, 0);
+
+    this.group.add(this.sol.obj);
+
+    // console.log("GROUP", this.group);
+  }
+
+  update() {
+    if (this.active) {
+      this.inc -= 0.5;
+      this.group.position.z = this.inc;
+      // console.log("INC", this.inc);
+    }
   }
 }
