@@ -2,6 +2,8 @@ import Montagne from "./Montagne.js";
 import Sol from "./Sol.js";
 import Rock from "./Rock.js";
 import Tree from "./Tree.js";
+import AllAsset from "./AllAsset.js";
+import Arbres from "./Arbres.js";
 
 import * as THREE from "three";
 
@@ -12,6 +14,8 @@ export default class Terrain {
     this.montagnes = [];
     this.tree = [];
     this.rock = [];
+    this.allAsset = new AllAsset(this.scene);
+    this.arbres = new Arbres(this.scene);
 
     this.group = new THREE.Object3D();
     this.active = false;
@@ -50,37 +54,42 @@ export default class Terrain {
       });
     }
 
-    for (let i = 0; i < this.montagnes.length; i++) {
-      this.montagnes[i].montagne(
-        assets[1].scene,
-        random(-20, 20),
-        1,
-        random(-100, 100)
-      );
+    // for (let i = 0; i < this.montagnes.length; i++) {
+    //   this.montagnes[i].montagne(
+    //     assets[1].scene,
+    //     random(-20, 20),
+    //     1,
+    //     random(-100, 100)
+    //   );
 
-      this.group.add(this.montagnes[i].obj);
-    }
+    //   this.group.add(this.montagnes[i].obj);
+    // }
 
-    for (let i = 0; i < this.tree.length; i++) {
-      this.tree[i].tree(assets[3].scene, random(-20, 20), 1, random(-100, 100));
-      this.group.add(this.tree[i].obj);
-    }
+    // for (let i = 0; i < this.tree.length; i++) {
+    //   this.tree[i].tree(assets[3].scene, random(-20, 20), 1, random(-100, 100));
+    //   this.group.add(this.tree[i].obj);
+    // }
 
-    for (let i = 0; i < this.rock.length; i++) {
-      this.rock[i].rock(assets[2].scene, random(-20, 20), 1, random(-100, 100));
-      this.group.add(this.rock[i].obj);
-    }
+    // for (let i = 0; i < this.rock.length; i++) {
+    //   this.rock[i].rock(assets[2].scene, random(-20, 20), 1, random(-100, 100));
+    //   this.group.add(this.rock[i].obj);
+    // }
 
-    this.sol.sol(assets[0].scene, 0, 0, 0);
+    // this.sol.sol(assets[0].scene, 0, 0, 0);
+    // this.group.add(this.sol.obj);
 
-    this.group.add(this.sol.obj);
+    this.allAsset.allAsset(assets[4].scene, 0, 0, 0);
+    this.group.add(this.allAsset.obj);
+
+    this.arbres.arbres(assets[5].scene, 0, 0, 0);
+    this.group.add(this.arbres.obj);
 
     // console.log("GROUP", this.group);
   }
 
   update() {
     if (this.active) {
-      this.inc -= 0.5;
+      this.inc -= 0.1;
       this.group.position.z = this.inc;
       // console.log("INC", this.inc);
     }

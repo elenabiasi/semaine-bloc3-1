@@ -22,6 +22,8 @@ export default class App {
       "mountain.gltf",
       "rock.gltf",
       "tree.gltf",
+      "terrain.gltf",
+      "arbres.gltf",
     ];
 
     this.dep = 0;
