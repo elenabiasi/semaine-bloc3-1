@@ -33,6 +33,7 @@ export default class App {
     this.chat = new Chat();
     this.chat.addEventListener("word", this.addWord.bind(this));
     this.chat.addEventListener("speechEnd", this.speechEnd.bind(this));
+    this.chat.addEventListener("gpt_response", this.onResponse.bind(this));
 
     // init audio detector
     this.audioDetector = new AudioDetector();
@@ -219,13 +220,30 @@ export default class App {
   addWord(word) {
     // const mot = this.words.shift();
     // if (this.words.length <= 0) clearInterval(this.interval);
+    // const text = this.text.createText(word, this.font);
+    // this.allMots.push(text);
+    // console.log(text);
+    // this.allMots.forEach((mot, index) => {
+    //   mot.position.z = (this.allMots.length - 1 - index) * -1.5;
+    //   mot.position.x = (this.allMots.length - 1 - index) * -1.5;
+
     const text = this.text.createText(word, this.font);
+    const splineGeometry = this.splineObject.geometry;
+
     this.allMots.push(text);
     console.log(text);
+    let pourcent = 0;
     this.allMots.forEach((mot, index) => {
-      mot.position.z = (this.allMots.length - 1 - index) * -1.5;
-      mot.position.x = (this.allMots.length - 1 - index) * -1.5;
+      pourcent = index / this.motsDeLaPhrase.length;
+
+      let textPosition = this.curve.getPointAt(pourcent);
+      mot.position.set(textPosition.x, textPosition.y, textPosition.z);
     });
+  }
+
+  onResponse(data) {
+    console.log("reponse", data);
+    this.motsDeLaPhrase = data.split(" ");
   }
 
   speechEnd(data) {

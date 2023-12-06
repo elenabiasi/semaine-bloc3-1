@@ -83,10 +83,10 @@ export default class Terrain {
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
     // Create the final object to add to the scene
-    const splineObject = new THREE.Line(geometry, material);
+    this.splineObject = new THREE.Line(geometry, material);
     //splineObject.rotateY(Math.PI / 2);
-    this.scene.add(splineObject);
-    this.group.add(splineObject);
+    this.scene.add(this.splineObject);
+    this.group.add(this.splineObject);
 
     for (let i = 0; i < assets.length; i++) {
       const model = assets[i].scene;

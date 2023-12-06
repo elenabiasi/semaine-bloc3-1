@@ -19,10 +19,12 @@ export default class Chat extends EventEmitter {
     this.speech
       .init({
         volume: 1,
-        lang: "fr-CH",
+        lang: "fr-FR",
         rate: 1,
         pitch: 1,
-        voice: "Microsoft Guillaume - French (Switzerland)",
+        // voice: "Microsoft Guillaume - French (Switzerland)",
+        voice: "Thomas",
+
         splitSentences: true,
         listeners: {
           onvoiceschanged: (voices) => {
