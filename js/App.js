@@ -2,6 +2,11 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import Shape from "./Shape.js";
 import Light from "./Light.js";
+import Montagne from "./Montagne.js";
+import Sol from "./Sol.js";
+import Rock from "./Rock.js";
+import Tree from "./Tree.js";
+import Terrain from "./Terrain.js";
 import * as dat from "dat.gui";
 import Text from "./Text.js";
 // import Spline from "./Spline.js";
@@ -15,7 +20,12 @@ export default class App {
     this.scene = null;
     this.camera = null;
 
-    this.assetsArray = ["asset.gltf", "mountain.gltf", "rock.gltf"];
+    this.assetsArray = [
+      "asset.gltf",
+      "mountain.gltf",
+      "rock.gltf",
+      "tree.gltf",
+    ];
 
     this.gui = new dat.GUI();
 
@@ -83,6 +93,8 @@ export default class App {
     this.controls.enablePan = false;
     this.controls.enableZoom = false;
 
+    this.terrain = new Terrain(this.scene);
+
     // Create a cube
     const shape = new Shape(this.scene);
     this.cube = shape.createCube();
@@ -106,14 +118,7 @@ export default class App {
 
     const assetsManager = new loadObjManager(this.assetsArray);
     assetsManager.loadAllAssets().then((res) => {
-      this.assets = res;
-
-      const obj = this.assets[0].scene;
-
-      obj.rotation.set(0, Math.PI / 2, 0);
-      obj.position.y = -1.5;
-
-      this.scene.add(obj);
+      this.terrain.createShapes(res);
     });
 
     // Create a text
