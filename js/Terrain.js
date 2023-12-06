@@ -36,9 +36,54 @@ export default class Terrain {
       // this.group.add(r.scene.firstChild);
     }
     this.inc = 0;
+
+    // const scale = 0.3;
+
+    // const curve = new THREE.CatmullRomCurve3([
+    //   new THREE.Vector3(144 * scale, 5 * scale, 71 * scale),
+    //   new THREE.Vector3(-35 * scale, 5 * scale, 36 * scale),
+    //   new THREE.Vector3(148 * scale, 5 * scale, 0 * scale),
+    //   new THREE.Vector3(-22 * scale, 5 * scale, -23 * scale),
+    //   new THREE.Vector3(135 * scale, 5 * scale, -44 * scale),
+    //   new THREE.Vector3(3 * scale, 5 * scale, -78 * scale),
+    //   // new THREE.Vector3(144, 5, 71),
+    //   // new THREE.Vector3(-35, 5, 36),
+    //   // new THREE.Vector3(148, 5, 0),
+    //   // new THREE.Vector3(-22, 5, -23),
+    //   // new THREE.Vector3(135, 5, -44),
+    //   // new THREE.Vector3(3, 5, -78),
+    // ]);
+
+    // const points = curve.getPoints(50);
+    // const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    // const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+
+    // // Create the final object to add to the scene
+    // const splineObject = new THREE.Line(geometry, material);
   }
 
-  createShapes(assets) {
+  loadJson(url) {
+    return fetch(url)
+      .then((data) => data.json())
+      .then((json) => json);
+  }
+
+  async createShapes(assets) {
+    const json = await this.loadJson("./../assets/SPLINE.json");
+    const vectors = [];
+    json.points.forEach((point) => {
+      vectors.push(new THREE.Vector3(point.x, point.y, point.z));
+    });
+    this.curve = new THREE.CatmullRomCurve3(vectors);
+    const points = this.curve.getPoints(100);
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+    // Create the final object to add to the scene
+    const splineObject = new THREE.Line(geometry, material);
+    splineObject.rotateY(Math.PI / 2);
+    this.scene.add(splineObject);
+    this.group.add(splineObject);
+
     for (let i = 0; i < assets.length; i++) {
       const model = assets[i].scene;
 
