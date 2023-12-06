@@ -84,7 +84,10 @@ export default class Terrain {
     const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
     // Create the final object to add to the scene
     this.splineObject = new THREE.Line(geometry, material);
+    const splineGeometry = this.splineObject.geometry;
+
     //splineObject.rotateY(Math.PI / 2);
+    this.scene.add(this.curve);
     this.scene.add(this.splineObject);
     this.group.add(this.splineObject);
 

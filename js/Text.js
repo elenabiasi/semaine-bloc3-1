@@ -30,7 +30,7 @@ export default class Text {
     });
     const material = new THREE.MeshPhongMaterial({ color: 0x0000ff });
     const text = new THREE.Mesh(geometry, material);
-    text.rotateX(-0);
+    text.rotateX(-Math.PI / 2);
     text.castShadow = true;
     text.receiveShadow = true;
     this.scene.add(text);

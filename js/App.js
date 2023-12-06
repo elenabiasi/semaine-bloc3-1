@@ -228,7 +228,6 @@ export default class App {
     //   mot.position.x = (this.allMots.length - 1 - index) * -1.5;
 
     const text = this.text.createText(word, this.font);
-    const splineGeometry = this.splineObject.geometry;
 
     this.allMots.push(text);
     console.log(text);
