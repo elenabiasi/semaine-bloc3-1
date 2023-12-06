@@ -17,6 +17,8 @@ import Terrain from "./Terrain.js";
 
 export default class App {
   constructor() {
+    this.loader = new THREE.FileLoader();
+    this.jsonPath = "./assets/SPLINE.json";
     this.renderer = null;
     this.scene = null;
     this.camera = null;
@@ -29,9 +31,6 @@ export default class App {
     this.chat.addEventListener("word", this.addWord.bind(this));
     this.chat.addEventListener("speechEnd", this.speechEnd.bind(this));
     this.chat.addEventListener("gpt_response", this.onResponse.bind(this));
-
-    // init audio detector
-    // this.spline = new Spline();
 
     this.audioDetector = new AudioDetector();
     this.audioDetector.addEventListener(
@@ -53,6 +52,18 @@ export default class App {
 
     // console.log("Hello test salut quentin");
   }
+
+  // async loadCurveFromJSON(jsonpath) {
+  //   let curveJSON = await loadJSON(jsonpath);
+  //   let curve = createCurveFromJSON(curveJSON);
+  //   let curveTubeMesh = getTubeFromCurve(curve);
+
+  //   let curveAndMesh = {
+  //     curve: curve,
+  //     mesh: curveTubeMesh
+  //   }
+
+  // }
 
   async initTHREE() {
     // Create a scene
@@ -160,117 +171,122 @@ export default class App {
   }
 
   addWord(word) {
-    //   // Create a curve path using SplineCurve
-    const scale = 0.3;
+    //JSON Spline
 
-    const curve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(144 * scale, 5 * scale, 71 * scale),
-      new THREE.Vector3(-35 * scale, 5 * scale, 36 * scale),
-      new THREE.Vector3(148 * scale, 5 * scale, 0 * scale),
-      new THREE.Vector3(-22 * scale, 5 * scale, -23 * scale),
-      new THREE.Vector3(135 * scale, 5 * scale, -44 * scale),
-      new THREE.Vector3(3 * scale, 5 * scale, -78 * scale),
-      // new THREE.Vector3(144, 5, 71),
-      // new THREE.Vector3(-35, 5, 36),
-      // new THREE.Vector3(148, 5, 0),
-      // new THREE.Vector3(-22, 5, -23),
-      // new THREE.Vector3(135, 5, -44),
-      // new THREE.Vector3(3, 5, -78),
-    ]);
+    this.loader.load(this.jsonPath, (data) => {
+      // Parse the JSON data
+      this.jsonData = JSON.parse(data);
 
-    const points = curve.getPoints(50);
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+      // Extract control points from JSON
+      const controlPoints = this.jsonData.controlPoints.map(
+        (point) => new THREE.Vector3(point.x, point.y, point.z)
+      );
 
-    // Create the final object to add to the scene
-    const splineObject = new THREE.Line(geometry, material);
+      // Create CatmullRomCurve3 with the control points
+      const curve = new THREE.CatmullRomCurve3(controlPoints);
 
-    // const points = curve.getPoinsts(50);
-    // const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    // const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-    // const splineObject = new THREE.Line(geometry, material);
+      // Now you can use the 'curve' in your Three.js scene
+      // For example, you might want to create a line geometry using the curve
+      const curveGeometry = new THREE.BufferGeometry().setFromPoints(
+        curve.getPoints(100)
+      );
+      const curveMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+      const splineObject = new THREE.Line(curveGeometry, curveMaterial);
 
-    // const rotationMatrix = new THREE.Matrix4().makeRotationX(Math.PI / 2);
-    // points.forEach((point) => {
-    //   point.applyMatrix4(rotationMatrix);
-    // });
+      this.scene.add(curveObject);
 
-    // this.scene.add(splineObject);
-    // this.splineObject = new THREE.CatmullRomCurve3(points);
-    // const rotationMatrix = new THREE.Matrix4().makeRotationX(Math.PI / -2);
-    // this.splineObject.points.forEach((points) => {
-    //   points.applyMatrix4(rotationMatrix);
-    // });
+      //--> wtf
 
-    this.scene.add(splineObject);
+      //   // Create a curve path using SplineCurve
+      // const scale = 0.3;
 
-    // // Create a curve using a sine function
-    // const sineWaveCurve = new THREE.Curve();
+      // const curve = new THREE.CatmullRomCurve3([
+      //   new THREE.Vector3(144 * scale, scale, 71 * scale),
+      //   new THREE.Vector3(-35 * scale, scale, 36 * scale),
+      //   new THREE.Vector3(148 * scale, scale, 0 * scale),
+      //   new THREE.Vector3(-22 * scale, scale, -23 * scale),
+      //   new THREE.Vector3(135 * scale, scale, -44 * scale),
+      //   new THREE.Vector3(3 * scale, scale, -78 * scale),
 
-    // sineWaveCurve.getPoint = function (t) {
-    //   const amplitude = 1; // Adjust the amplitude of the sine wave
-    //   const frequency = 1; // Adjust the frequency of the sine wave
+      // ]);
 
-    //   const x = t * 10; // Adjust the scale of the wave along the x-axis
-    //   const y = amplitude * Math.sin(frequency * x);
-    //   const z = 0;
+      // const points = curve.getPoints(50);
+      // const geometry = new THREE.BufferGeometry().setFromPoints(points);
+      // const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
 
-    //   return new THREE.Vector3(x, y, z);
-    // };
+      // // Create the final object to add to the scene
+      // const splineObject = new THREE.Line(geometry, material);
 
-    // // Create a geometry from the curve
-    // const curveGeometry = new THREE.BufferGeometry().setFromPoints(
-    //   sineWaveCurve.getPoints(100)
-    // );
+      // this.scene.add(splineObject);
 
-    // // Create a material
-    // const curveMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+      // // Create a curve using a sine function
+      // const sineWaveCurve = new THREE.Curve();
 
-    // // Create the curve object
-    // const curveObject = new THREE.Line(curveGeometry, curveMaterial);
+      // sineWaveCurve.getPoint = function (t) {
+      //   const amplitude = 1; // Adjust the amplitude of the sine wave
+      //   const frequency = 1; // Adjust the frequency of the sine wave
 
-    // // Rotate the curve object along the x-axis
-    // curveObject.rotation.x = Math.PI / 2;
+      //   const x = t * 10; // Adjust the scale of the wave along the x-axis
+      //   const y = amplitude * Math.sin(frequency * x);
+      //   const z = 0;
 
-    // this.scene.add(curveObject);
+      //   return new THREE.Vector3(x, y, z);
+      // };
 
-    // Create a tube geometry along the curve
-    // const tubeGeometry = new THREE.TubeGeometry(curve, 100, 0.2, 20, false);
-    // const tubeMaterial = new THREE.MeshPhongMaterial({
-    //   color: 0x000000,
-    //   wireframe: true,
-    // });
-    // const tubeMesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
-    // this.scene.add(tubeMesh);
+      // // Create a geometry from the curve
+      // const curveGeometry = new THREE.BufferGeometry().setFromPoints(
+      //   sineWaveCurve.getPoints(100)
+      // );
 
-    // const mot = this.words.shift();
-    // if (this.words.length <= 0) clearInterval(this.interval);
+      // // Create a material
+      // const curveMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
 
-    // console.log(word);
-    // console.log(this.font);
-    const text = this.text.createText(word, this.font);
-    const splineGeometry = splineObject.geometry;
-    // const pointOnCurve = new THREE.Vector3(); // Create a vector to store the result
+      // // Create the curve object
+      // const curveObject = new THREE.Line(curveGeometry, curveMaterial);
 
-    this.allMots.push(text);
-    console.log(text);
-    let pourcent = 0;
-    this.allMots.forEach((mot, index) => {
-      // // mot.position.z = (this.allMots.length - 1 - index) * -5;
-      // // mot.position.x = -10;
-      // const t = Date.now() * 0.0001;
-      // const normalizedT = t % 1;
-      // // let incr = 0.5;
-      // // incr += 0.01;
-      // let before = this.allMots.length - 1 - index;
-      // pourcent += 0.07; //index / this.motsDeLaPhrase.length;
-      pourcent = index / this.motsDeLaPhrase.length;
+      // // Rotate the curve object along the x-axis
+      // curveObject.rotation.x = Math.PI / 2;
 
-      let textPosition = curve.getPointAt(pourcent);
-      // let textPosition = curve.getPointAt(normalizedT);
-      // console.log(textPosition);
-      // mot.position.z = (this.allMots.length - 1 - index) * -1;
-      mot.position.set(textPosition.x, 5 * scale, textPosition.z);
+      // this.scene.add(curveObject);
+
+      // Create a tube geometry along the curve
+      // const tubeGeometry = new THREE.TubeGeometry(curve, 100, 0.2, 20, false);
+      // const tubeMaterial = new THREE.MeshPhongMaterial({
+      //   color: 0x000000,
+      //   wireframe: true,
+      // });
+      // const tubeMesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
+      // this.scene.add(tubeMesh);
+
+      // const mot = this.words.shift();
+      // if (this.words.length <= 0) clearInterval(this.interval);
+
+      // console.log(word);
+      // console.log(this.font);
+      const text = this.text.createText(word, this.font);
+      const splineGeometry = splineObject.geometry;
+      // const pointOnCurve = new THREE.Vector3(); // Create a vector to store the result
+
+      this.allMots.push(text);
+      console.log(text);
+      let pourcent = 0;
+      this.allMots.forEach((mot, index) => {
+        // // mot.position.z = (this.allMots.length - 1 - index) * -5;
+        // // mot.position.x = -10;
+        // const t = Date.now() * 0.0001;
+        // const normalizedT = t % 1;
+        // // let incr = 0.5;
+        // // incr += 0.01;
+        // let before = this.allMots.length - 1 - index;
+        // pourcent += 0.07; //index / this.motsDeLaPhrase.length;
+        pourcent = index / this.motsDeLaPhrase.length;
+
+        let textPosition = curve.getPointAt(pourcent);
+        // let textPosition = curve.getPointAt(normalizedT);
+        // console.log(textPosition);
+        // mot.position.z = (this.allMots.length - 1 - index) * -1;
+        mot.position.set(textPosition.x, 0, textPosition.z);
+      });
     });
 
     // mot.position.z = (this.allMots.length - 1 - index) * -5;
