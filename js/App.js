@@ -13,6 +13,7 @@ import Text from "./Text.js";
 import Chat from "./Chat";
 import AudioDetector from "./AudioDetector";
 import loadObjManager from "./loadObjManager.js";
+import { Flow } from "three/examples/jsm/controls/CurveModifier.js";
 
 export default class App {
   constructor() {
@@ -127,7 +128,7 @@ export default class App {
     console.log(this.font);
     this.text.createText("Test", this.font);
 
-    this.spline;
+    // this.spline;
     // collection de mots
     // const phrase =
     //   "Les cookies nous permettent de personnaliser le contenu et les annonces";

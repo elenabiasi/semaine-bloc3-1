@@ -47,18 +47,18 @@ export default class Text {
       font: font,
       size: 3,
       height: 2,
-      curveSegments: 12,
-      bevelEnabled: true,
-      bevelThickness: 0.1,
-      bevelSize: 0.1,
-      bevelOffset: 0,
-      bevelSegments: 5,
+      // curveSegments: 12,
+      // bevelEnabled: true,
+      // bevelThickness: 0.1,
+      // bevelSize: 0.1,
+      // bevelOffset: 0,
+      // bevelSegments: 5,
     });
 
     // Center the text
-    geometry.computeBoundingBox();
-    const textWidth = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-    geometry.translate(-textWidth / 2, 0, 0);
+    // geometry.computeBoundingBox();
+    // const textWidth = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+    // geometry.translate(-textWidth / 2, 0, 0);
 
     const material = new THREE.MeshPhongMaterial({ color: 0xffffff });
     const text = new THREE.Mesh(geometry, material);

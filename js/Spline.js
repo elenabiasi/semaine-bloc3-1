@@ -3,60 +3,73 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Flow } from "three/examples/jsm/controls/CurveModifier.js";
 
 export default class Spline {
-  constructor() {
-    this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(
-      55,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
-    camera.position.set(0, 1, 3);
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-    new OrbitControls(camera, renderer.domElement);
+  constructor(scene) {
+    this.scene = scene;
 
-    this.somePoints = [
-      new THREE.Vector3(1, 0, -1),
-      new THREE.Vector3(1, 0.6, 1),
-      new THREE.Vector3(-1, 0, 1),
-      new THREE.Vector3(-1, 0.2, -1),
-    ];
+    // https://discourse.threejs.org/t/how-to-draw-spline-in-threejs/49238
 
-    this.curve = new THREE.CatmullRomCurve3(somePoints);
-    curve.closed = true;
+    // general setup, boring, skip to the next comment
 
-    this.points = curve.getPoints(60);
-    this.line = new THREE.LineLoop(
-      new THREE.BufferGeometry().setFromPoints(points),
-      new THREE.LineBasicMaterial({ color: 0xffffaa })
-    );
-    scene.add(line);
+    // var scene = new THREE.Scene();
+    // scene.background = new THREE.Color("gainsboro");
 
-    this.light = new THREE.DirectionalLight(0xc0c0c0);
-    light.position.set(-8, 12, 10);
-    light.intensity = 1.0;
-    scene.add(light);
+    // var camera = new THREE.OrthographicCamera(
+    //   -innerWidth / 2,
+    //   innerWidth / 2,
+    //   innerHeight / 2,
+    //   -innerHeight / 2,
+    //   -10,
+    //   10
+    // );
+    // camera.position.set(0, 0, 10);
+    // camera.lookAt(scene.position);
 
-    this.geometry = new THREE.BoxGeometry(0.2, 0.08, 0.05);
-    this.material = new THREE.MeshPhongMaterial({
-      color: 0x99ffff,
-      wireframe: false,
-    });
-    this.objectToCurve = new THREE.Mesh(geometry, material);
+    // var renderer = new THREE.WebGLRenderer({ antialias: true });
+    // renderer.setSize(innerWidth, innerHeight);
+    // document.body.appendChild(renderer.domElement);
 
-    this.flow = new Flow(objectToCurve);
-    flow.updateCurve(0, curve);
-    scene.add(flow.object3D);
+    // window.addEventListener("resize", (event) => {
+    //   camera.updateProjectionMatrix();
+    //   renderer.setSize(innerWidth, innerHeight);
+    //   renderer.render(scene, camera);
+    // });
 
-    animate();
-  }
+    // next comment
 
-  animate() {
-    requestAnimationFrame(animate);
-    this.flow.moveAlongCurve(0.0006);
-    this.renderer.render(scene, camera);
+    // create a spline curve and a line to visualize it
+
+    var curve = new THREE.SplineCurve([]),
+      spline = new THREE.Line(
+        new THREE.BufferGeometry(),
+        new THREE.LineBasicMaterial({ color: "black" })
+      );
+
+    // capture mouse clicks
+
+    window.addEventListener("click", onClick);
+
+    function onClick(event) {
+      // click coordinates
+      var x = event.clientX - innerWidth / 2,
+        y = innerHeight / 2 - event.clientY;
+
+      // draw a black circle to indicate dot position
+      var point = new THREE.Mesh(
+        new THREE.CircleGeometry(5),
+        new THREE.MeshBasicMaterial({ color: "black" })
+      );
+      point.position.set(x, y, 0);
+      scene.add(point);
+
+      // add the point to the curve
+      curve.points.push(new THREE.Vector2(x, y));
+      curve = new THREE.SplineCurve(curve.points);
+      var points = curve.getPoints(20 * curve.points.length);
+      console.log(curve.points);
+      // regenerate its image
+      spline.geometry.dispose();
+      spline.geometry = new THREE.BufferGeometry();
+      spline.geometry.setFromPoints(points);
+    }
   }
 }

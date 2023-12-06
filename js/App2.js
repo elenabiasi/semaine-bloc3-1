@@ -8,6 +8,12 @@ import Text from "./Text.js";
 import Chat from "./Chat";
 import AudioDetector from "./AudioDetector";
 import loadObjManager from "./loadObjManager.js";
+// import { Flow } from "three/examples/jsm/controls/CurveModifier.js";
+import Montagne from "./Montagne.js";
+import Sol from "./Sol.js";
+import Rock from "./Rock.js";
+import Tree from "./Tree.js";
+import Terrain from "./Terrain.js";
 
 export default class App {
   constructor() {
@@ -22,6 +28,7 @@ export default class App {
     this.chat = new Chat();
     this.chat.addEventListener("word", this.addWord.bind(this));
     this.chat.addEventListener("speechEnd", this.speechEnd.bind(this));
+    this.chat.addEventListener("gpt_response", this.onResponse.bind(this));
 
     // init audio detector
     // this.spline = new Spline();
@@ -34,7 +41,6 @@ export default class App {
 
     document.addEventListener("keydown", (e) => {
       if (e.key === " ") {
-        console.log("space");
         this.audioDetector.stopRecording();
       }
     });
@@ -45,7 +51,7 @@ export default class App {
       }
     });
 
-    console.log("Hello test salut quentin");
+    // console.log("Hello test salut quentin");
   }
 
   async initTHREE() {
@@ -89,6 +95,9 @@ export default class App {
     const shape = new Shape(this.scene);
     this.cube = shape.createCube();
 
+    // create spline
+    // this.spline = new Spline(this.scene);
+
     // Create a light
     // this.light = new Light(this.scene);
     this.light = new THREE.HemisphereLight(0xffffff, 0x4040ff, 1.0);
@@ -121,8 +130,8 @@ export default class App {
     // Create a text
     this.text = new Text(this.scene);
     this.font = await this.text.loadFont();
-    console.log(this.font);
-    this.text.createText("Test", this.font);
+    // console.log(this.font);
+    // this.text.createText("Test", this.font);
 
     // collection de mots
     // const phrase =
@@ -151,58 +160,145 @@ export default class App {
   }
 
   addWord(word) {
-    // Create a curve path using SplineCurve
-    const curve = new THREE.SplineCurve([
-      new THREE.Vector2(-10, 0),
-      new THREE.Vector2(-5, 5),
-      new THREE.Vector2(0, 0),
-      new THREE.Vector2(5, -5),
-      new THREE.Vector2(10, 0),
+    //   // Create a curve path using SplineCurve
+    const scale = 0.3;
+
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(144 * scale, 5 * scale, 71 * scale),
+      new THREE.Vector3(-35 * scale, 5 * scale, 36 * scale),
+      new THREE.Vector3(148 * scale, 5 * scale, 0 * scale),
+      new THREE.Vector3(-22 * scale, 5 * scale, -23 * scale),
+      new THREE.Vector3(135 * scale, 5 * scale, -44 * scale),
+      new THREE.Vector3(3 * scale, 5 * scale, -78 * scale),
+      // new THREE.Vector3(144, 5, 71),
+      // new THREE.Vector3(-35, 5, 36),
+      // new THREE.Vector3(148, 5, 0),
+      // new THREE.Vector3(-22, 5, -23),
+      // new THREE.Vector3(135, 5, -44),
+      // new THREE.Vector3(3, 5, -78),
     ]);
 
+    const points = curve.getPoints(50);
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+
+    // Create the final object to add to the scene
+    const splineObject = new THREE.Line(geometry, material);
+
+    // const points = curve.getPoinsts(50);
+    // const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    // const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+    // const splineObject = new THREE.Line(geometry, material);
+
+    // const rotationMatrix = new THREE.Matrix4().makeRotationX(Math.PI / 2);
+    // points.forEach((point) => {
+    //   point.applyMatrix4(rotationMatrix);
+    // });
+
+    // this.scene.add(splineObject);
+    // this.splineObject = new THREE.CatmullRomCurve3(points);
+    // const rotationMatrix = new THREE.Matrix4().makeRotationX(Math.PI / -2);
+    // this.splineObject.points.forEach((points) => {
+    //   points.applyMatrix4(rotationMatrix);
+    // });
+
+    this.scene.add(splineObject);
+
+    // // Create a curve using a sine function
+    // const sineWaveCurve = new THREE.Curve();
+
+    // sineWaveCurve.getPoint = function (t) {
+    //   const amplitude = 1; // Adjust the amplitude of the sine wave
+    //   const frequency = 1; // Adjust the frequency of the sine wave
+
+    //   const x = t * 10; // Adjust the scale of the wave along the x-axis
+    //   const y = amplitude * Math.sin(frequency * x);
+    //   const z = 0;
+
+    //   return new THREE.Vector3(x, y, z);
+    // };
+
+    // // Create a geometry from the curve
+    // const curveGeometry = new THREE.BufferGeometry().setFromPoints(
+    //   sineWaveCurve.getPoints(100)
+    // );
+
+    // // Create a material
+    // const curveMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+
+    // // Create the curve object
+    // const curveObject = new THREE.Line(curveGeometry, curveMaterial);
+
+    // // Rotate the curve object along the x-axis
+    // curveObject.rotation.x = Math.PI / 2;
+
+    // this.scene.add(curveObject);
+
     // Create a tube geometry along the curve
-    const tubeGeometry = new THREE.TubeGeometry(curve, 100, 0.2, 20, false);
-    const tubeMaterial = new THREE.MeshPhongMaterial({
-      color: 0x000000,
-      wireframe: true,
-    });
-    const tubeMesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
-    this.scene.add(tubeMesh);
+    // const tubeGeometry = new THREE.TubeGeometry(curve, 100, 0.2, 20, false);
+    // const tubeMaterial = new THREE.MeshPhongMaterial({
+    //   color: 0x000000,
+    //   wireframe: true,
+    // });
+    // const tubeMesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
+    // this.scene.add(tubeMesh);
 
     // const mot = this.words.shift();
     // if (this.words.length <= 0) clearInterval(this.interval);
 
-    console.log(word);
-    console.log(this.font);
+    // console.log(word);
+    // console.log(this.font);
     const text = this.text.createText(word, this.font);
+    const splineGeometry = splineObject.geometry;
+    // const pointOnCurve = new THREE.Vector3(); // Create a vector to store the result
 
     this.allMots.push(text);
     console.log(text);
+    let pourcent = 0;
     this.allMots.forEach((mot, index) => {
-      // mot.position.z = (this.allMots.length - 1 - index) * -5;
-      // mot.position.x = -10;
+      // // mot.position.z = (this.allMots.length - 1 - index) * -5;
+      // // mot.position.x = -10;
+      // const t = Date.now() * 0.0001;
+      // const normalizedT = t % 1;
+      // // let incr = 0.5;
+      // // incr += 0.01;
+      // let before = this.allMots.length - 1 - index;
+      // pourcent += 0.07; //index / this.motsDeLaPhrase.length;
+      pourcent = index / this.motsDeLaPhrase.length;
 
-      const t = Date.now() * 0.001;
-
-      // mot.position.x = Math.sin(t) * 10;
-      // mot.position.y = Math.cos(t) * 10;
-
-      let incr = 0;
-      incr += 0.1;
-
-      // while (t <= 1) {
-      let textPosition = curve.getPointAt(incr); // Adjust the parameter (0 to 1) for the desired position along the curve
-
-      // const textRotation = curve.getTangentAt(0);
-
-      // mot.position.z = (this.allMots.length - 1 - index) * -5;
-      // mot.position.x = -10;
-
-      mot.position.set(textPosition.x, textPosition.y, 0);
-      // mot.position.set(textPosition.x, textPosition.y, 0);
-      // mot.rotation.z = Math.atan2(textRotation.y, textRotation.x);
-      // }
+      let textPosition = curve.getPointAt(pourcent);
+      // let textPosition = curve.getPointAt(normalizedT);
+      // console.log(textPosition);
+      // mot.position.z = (this.allMots.length - 1 - index) * -1;
+      mot.position.set(textPosition.x, 5 * scale, textPosition.z);
     });
+
+    // mot.position.z = (this.allMots.length - 1 - index) * -5;
+    // mot.position.x = -10;
+
+    // mot.position.x = Math.sin(t) * 10;
+    // mot.position.y = Math.cos(t) * 10;
+
+    // let incr = 0;
+    // incr += 0.1;
+
+    // while (t <= 1) {
+    // Adjust the parameter (0 to 1) for the desired position along the curve
+
+    // const textRotation = curve.getTangentAt(0);
+
+    // mot.position.z = (this.allMots.length - 1 - index) * -5;
+    // mot.position.x = -10;
+
+    // mot.position.set(textPosition.x, textPosition.y, 0);
+    // mot.rotation.z = Math.atan2(textRotation.y, textRotation.x);
+
+    // }
+  }
+
+  onResponse(data) {
+    console.log("reponse", data);
+    this.motsDeLaPhrase = data.split(" ");
   }
 
   speechEnd(data) {
