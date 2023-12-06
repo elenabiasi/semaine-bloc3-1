@@ -45,7 +45,7 @@ export default class App {
       }
     });
 
-    console.log("Hello test");
+    console.log("Hello test salut quentin");
   }
 
   async initTHREE() {
