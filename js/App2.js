@@ -263,28 +263,29 @@ export default class App {
 
       // console.log(word);
       // console.log(this.font);
+      // // mot.position.z = (this.allMots.length - 1 - index) * -5;
+      // // mot.position.x = -10;
+      // const t = Date.now() * 0.0001;
+      // const normalizedT = t % 1;
+      // // let incr = 0.5;
+      // // incr += 0.01;
+      // let before = this.allMots.length - 1 - index;
+      // pourcent += 0.07; //index / this.motsDeLaPhrase.length;
+      // const pointOnCurve = new THREE.Vector3(); // Create a vector to store the result
+      // let textPosition = curve.getPointAt(normalizedT);
+      // console.log(textPosition);
+      // mot.position.z = (this.allMots.length - 1 - index) * -1;
+
       const text = this.text.createText(word, this.font);
       const splineGeometry = splineObject.geometry;
-      // const pointOnCurve = new THREE.Vector3(); // Create a vector to store the result
 
       this.allMots.push(text);
       console.log(text);
       let pourcent = 0;
       this.allMots.forEach((mot, index) => {
-        // // mot.position.z = (this.allMots.length - 1 - index) * -5;
-        // // mot.position.x = -10;
-        // const t = Date.now() * 0.0001;
-        // const normalizedT = t % 1;
-        // // let incr = 0.5;
-        // // incr += 0.01;
-        // let before = this.allMots.length - 1 - index;
-        // pourcent += 0.07; //index / this.motsDeLaPhrase.length;
         pourcent = index / this.motsDeLaPhrase.length;
 
         let textPosition = curve.getPointAt(pourcent);
-        // let textPosition = curve.getPointAt(normalizedT);
-        // console.log(textPosition);
-        // mot.position.z = (this.allMots.length - 1 - index) * -1;
         mot.position.set(textPosition.x, 0, textPosition.z);
       });
     });
