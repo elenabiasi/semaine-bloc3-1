@@ -76,7 +76,7 @@ export default class Terrain {
     const json = await this.loadJson("./../assets/SPLINE.json");
     const vectors = [];
     json.points.forEach((point) => {
-      vectors.push(new THREE.Vector3(point.x, point.y, point.z));
+      vectors.push(new THREE.Vector3(-point.z, point.y, point.x));
     });
     this.curve = new THREE.CatmullRomCurve3(vectors);
     const points = this.curve.getPoints(100);
@@ -84,7 +84,7 @@ export default class Terrain {
     const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
     // Create the final object to add to the scene
     const splineObject = new THREE.Line(geometry, material);
-    splineObject.rotateY(Math.PI / 2);
+    //splineObject.rotateY(Math.PI / 2);
     this.scene.add(splineObject);
     this.group.add(splineObject);
 
