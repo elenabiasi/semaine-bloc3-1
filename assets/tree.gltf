@@ -15,29 +15,13 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Cylinder.007",
-			"rotation":[
-				0,
-				-0.998149037361145,
-				0,
-				0.060815613716840744
-			],
-			"scale":[
-				0.6591693758964539,
-				0.6591693758964539,
-				0.6591693758964539
-			],
-			"translation":[
-				-41.832576751708984,
-				2.074309825897217,
-				18.31238555908203
-			]
+			"name":"Cylinder.012"
 		}
 	],
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"Material.014",
+			"name":"Material.073",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
@@ -48,7 +32,7 @@
 		},
 		{
 			"doubleSided":true,
-			"name":"Material.015",
+			"name":"Material.074",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":1
@@ -60,7 +44,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Cylinder.009",
+			"name":"Cylinder.014",
 			"primitives":[
 				{
 					"attributes":{
@@ -90,19 +74,14 @@
 		},
 		{
 			"sampler":0,
-			"source":1
+			"source":0
 		}
 	],
 	"images":[
 		{
 			"mimeType":"image/jpeg",
-			"name":"Sans titre-2.jpg.009",
-			"uri":"../../../../Sans%20titre-2.jpg"
-		},
-		{
-			"mimeType":"image/jpeg",
-			"name":"Sans titre-2.jpg.010",
-			"uri":"../../../../Sans%20titre-2.jpg"
+			"name":"Sans titre-2",
+			"uri":"Sans%20titre-2.jpg.019/Sans%20titre-2.jpg"
 		}
 	],
 	"accessors":[
