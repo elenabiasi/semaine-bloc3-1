@@ -10,7 +10,7 @@ export default class Text {
   loadFont() {
     const loader = new FontLoader();
     return new Promise((resolve, reject) => {
-      loader.load("./Mars Bold Display_Regular.json", (font) => {
+      loader.load("./Fredoka One_Regular.json", (font) => {
         resolve(font);
       });
     });
@@ -19,7 +19,7 @@ export default class Text {
   createText(_text, font) {
     const geometry = new TextGeometry(_text, {
       font: font,
-      size: 2,
+      size: 0.8,
       height: 2,
       // curveSegments: 12,
       // bevelEnabled: true,
