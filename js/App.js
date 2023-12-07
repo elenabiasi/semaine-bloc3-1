@@ -27,6 +27,7 @@ export default class App {
     ];
 
     this.dep = 0;
+    this.generalINC = 0;
 
     this.gui = new dat.GUI();
 
@@ -123,6 +124,9 @@ export default class App {
     this.light.createLight();
     this.light.gui(this.gui);
 
+    // this.light = new THREE.HemisphereLight(0xffffff, 0x4040ff, 1.0);
+    // this.scene.add(this.light);
+
     // Create a floor
     // shape.createFloor();
 
@@ -134,8 +138,9 @@ export default class App {
         terrain.createShapes(res);
         terrain.group.position.z = 500;
       });
-      this.addTerrainFirst();
-      this.addTerrain();
+      // this.addTerrainFirst(0);
+      this.addTerrain(-100);
+      this.addTerrain(100);
     });
 
     // Create a text
@@ -195,29 +200,33 @@ export default class App {
   //   this.sol[1].sol(assets[0].scene, 0, 0, 0);
   // }
 
-  addTerrain() {
+  addTerrain(inc) {
     // this.terrains[0].createShapes(this.all_assets);
     if (this.terrains.length > 0) {
       this.shifted = this.terrains.shift();
       this.shifted.active = true;
-      this.shifted.inc = 200;
+      this.shifted.inc = inc;
+      this.shifted.group.position.z = inc;
+      this.pourcentageSurLigne = 0;
       // this.terrains.push(this.shifted);
       this.terrainsVisible.push(this.shifted);
     }
   }
 
-  addTerrainFirst() {
+  addTerrainFirst(inc) {
     // this.terrains[0].createShapes(this.all_assets);
     if (this.terrains.length > 0) {
       this.shifted = this.terrains.shift();
       this.shifted.active = true;
-      this.shifted.inc = 0;
+      this.shifted.inc = inc;
+      this.pourcentageSurLigne = 0;
       // this.terrains.push(this.shifted);
       this.terrainsVisible.push(this.shifted);
     }
   }
 
   addWord(word) {
+    console.log(this.shifted.curve);
     // const mot = this.words.shift();
     // if (this.words.length <= 0) clearInterval(this.interval);
     // const text = this.text.createText(word, this.font);
@@ -232,12 +241,37 @@ export default class App {
     this.allMots.push(text);
     console.log(text);
     let pourcent = 0;
-    this.allMots.forEach((mot, index) => {
-      pourcent = index / this.motsDeLaPhrase.length;
+    // this.allMots.forEach((mot, index) => {
+    //   // pourcent = index / this.motsDeLaPhrase.length;
+    //   pourcent = this.pourcentageSurLigne;
+    //   this.pourcentageSurLigne += 0.02;
+    //   console.log(pourcent);
+    //   let textPosition = this.shifted.curve.getPointAt(1 - pourcent);
+    //   mot.position.set(textPosition.x - mot.size.x / 2, 0, textPosition.z);
+    //   this.shifted.group.add(mot);
+    //   // mot.removeFromParent();
+    // });
 
-      let textPosition = this.curve.getPointAt(pourcent);
-      mot.position.set(textPosition.x, textPosition.y, textPosition.z);
+    //quel terrain prendre
+    let terrain = null;
+    this.terrainsVisible.forEach((element) => {
+      if (element.contains()) terrain = element;
     });
+    const proportion = Math.abs((terrain.group.position.z - 100) / 200);
+    console.log("*****", proportion);
+
+    // pourcent = this.pourcentageSurLigne;
+    // this.pourcentageSurLigne += 0.02;
+    // // console.log(this.pourcentageSurLigne);
+    let textPosition = terrain.curve.getPointAt(1 - proportion);
+    // console.log("text position", textPosition);
+    text.position.set(textPosition.x - text.size.x / 2, 0, textPosition.z);
+    terrain.group.add(text);
+
+    // this.terrainsVisible.forEach((terrain) => {
+    //   terrain.group.position.z += this.generalINC;
+    // });
+    // this.generalINC -= 0.5;
   }
 
   onResponse(data) {
@@ -262,13 +296,20 @@ export default class App {
 
     for (let i = this.terrainsVisible.length - 1; i >= 0; i--) {
       const terrain = this.terrainsVisible[i];
+
+      if (terrain.contains() && terrain.splineObject)
+        terrain.splineObject.material.color.setHex(0xff00ff);
+      else if (!terrain.contains() && terrain.splineObject)
+        terrain.splineObject.material.color.setHex(0xff0000);
+
       terrain.update();
+
       if (terrain.group.position.z <= -200) {
         // terrain.active = false;
         terrain.group.position.z = 500;
         this.terrains.push(terrain);
         this.terrainsVisible.splice(i, 1);
-        this.addTerrain();
+        this.addTerrain(200);
       }
     }
 

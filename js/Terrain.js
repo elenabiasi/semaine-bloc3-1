@@ -14,6 +14,7 @@ export default class Terrain {
     this.montagnes = [];
     this.tree = [];
     this.rock = [];
+    this.curve = null;
     this.allAsset = new AllAsset(this.scene);
     this.arbres = new Arbres(this.scene);
 
@@ -76,7 +77,7 @@ export default class Terrain {
     const json = await this.loadJson("./../assets/SPLINE.json");
     const vectors = [];
     json.points.forEach((point) => {
-      vectors.push(new THREE.Vector3(point.z, point.y, -point.x));
+      vectors.push(new THREE.Vector3(point.z, point.y + 2, -point.x));
     });
     this.curve = new THREE.CatmullRomCurve3(vectors);
     const points = this.curve.getPoints(100);
@@ -84,10 +85,11 @@ export default class Terrain {
     const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
     // Create the final object to add to the scene
     this.splineObject = new THREE.Line(geometry, material);
+    // this.splineObject.material.color =
     const splineGeometry = this.splineObject.geometry;
 
     //splineObject.rotateY(Math.PI / 2);
-    this.scene.add(this.curve);
+    // this.scene.add(this.curve);
     this.scene.add(this.splineObject);
     this.group.add(this.splineObject);
 
@@ -135,9 +137,19 @@ export default class Terrain {
     // console.log("GROUP", this.group);
   }
 
+  getCurve() {}
+
+  //detect if terrain contains vector (0,0,0);
+  contains() {
+    if (this.group.position.z - 100 <= 0 && this.group.position.z + 100 > 0) {
+      return true;
+    }
+    return false;
+  }
+
   update() {
     if (this.active) {
-      this.inc -= 0.1;
+      this.inc -= 0.05;
       this.group.position.z = this.inc;
       // console.log("INC", this.inc);
     }

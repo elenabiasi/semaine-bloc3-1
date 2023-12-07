@@ -19,8 +19,8 @@ export default class Text {
   createText(_text, font) {
     const geometry = new TextGeometry(_text, {
       font: font,
-      size: 1,
-      height: 0.5,
+      size: 2,
+      height: 2,
       // curveSegments: 12,
       // bevelEnabled: true,
       // bevelThickness: 0.1,
@@ -28,8 +28,10 @@ export default class Text {
       // bevelOffset: 0,
       // bevelSegments: 5,
     });
-    const material = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+    const material = new THREE.MeshPhongMaterial({ color: 0xffffff });
     const text = new THREE.Mesh(geometry, material);
+    const boundingBox = new THREE.Box3().setFromObject(text);
+    text.size = boundingBox.getSize(new THREE.Vector3());
     text.rotateX(-Math.PI / 2);
     text.castShadow = true;
     text.receiveShadow = true;
