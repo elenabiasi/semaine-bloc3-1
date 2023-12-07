@@ -84,4 +84,8 @@ export default class Light {
 
     folder.open();
   }
+
+  changeLightColor(color) {
+    this.directionalLight.color.setHex(color);
+  }
 }
