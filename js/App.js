@@ -63,8 +63,9 @@ export default class App {
       0.1,
       1000
     );
+
     this.camera.position.z = 16;
-    this.camera.position.y = 26;
+    this.camera.position.y = 30;
     this.camera.position.x = -22.3;
     this.camera.rotation.x = 0;
     this.camera.rotation.y = 0;
@@ -100,7 +101,7 @@ export default class App {
     this.terrains = [];
     this.terrainsVisible = [];
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 50; i++) {
       const t = new Terrain(this.scene);
       this.terrains.push(t);
     }
@@ -267,12 +268,14 @@ export default class App {
     // const proportion = Math.abs((terrain.group.position.z - 100) / 200);
     const proportion = Math.abs((terrain.group.position.z - 100) / 200);
 
-    console.log("*****", proportion);
+    // console.log("*****", proportion);
+    // let lineSpacing = this.allMots.length * 0.002; // Adjust this value as needed
+    // const spacing = 1 - proportion - lineSpacing;
+    // console.log(spacing);
 
-    let lineSpacing = this.allMots.length * 0.002; // Adjust this value as needed
-    const spacing = 1 - proportion - lineSpacing;
-    console.log(spacing);
-    let textPosition = terrain.curve.getPointAt(spacing);
+    // let textPosition = terrain.curve.getPointAt(spacing);
+
+    let textPosition = terrain.curve.getPointAt(1 - proportion);
 
     // Determine the z position for the current text line
     // textPosition.z += lineSpacing * this.allMots.length;
@@ -284,7 +287,7 @@ export default class App {
 
     // let positionz = terrain.curve.getPointAt(1 - proportion + 10);
     // console.log("text position", textPosition);
-    text.position.set(textPosition.x - text.size.x / 2, 0, textPosition.z);
+    text.position.set(textPosition.x - text.size.x / 2, 0.5, textPosition.z);
     // const halfTextWidth = text.size.x / 2;
     // const xPosition = textPosition.x - halfTextWidth;
 
