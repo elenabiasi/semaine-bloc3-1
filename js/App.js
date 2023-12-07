@@ -177,8 +177,12 @@ export default class App {
   }
 
   wordFoundHandler(e) {
-    if (e == "bonjour") {
+    if (e == "fin") {
       this.light.changeLightColor(0xff0000);
+      this.camera.position.y = 100;
+      this.camera.position.z = 0;
+      this.camera.position.x = 0;
+      this.camera.lookAt(new THREE.Vector3(0, 0, 0));
     }
     console.log("from APp, word FOUND ", e);
   }
