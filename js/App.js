@@ -63,9 +63,9 @@ export default class App {
       0.1,
       1000
     );
-    this.camera.position.z = 30;
-    this.camera.position.y = 35;
-    this.camera.position.x = -30;
+    this.camera.position.z = 16;
+    this.camera.position.y = 26;
+    this.camera.position.x = -22.3;
     this.camera.rotation.x = 0;
     this.camera.rotation.y = 0;
     this.camera.rotation.z = 0;
@@ -233,7 +233,7 @@ export default class App {
   }
 
   addWord(word) {
-    console.log(this.shifted.curve);
+    // console.log(this.shifted.curve);
     // const mot = this.words.shift();
     // if (this.words.length <= 0) clearInterval(this.interval);
     // const text = this.text.createText(word, this.font);
@@ -246,7 +246,7 @@ export default class App {
     const text = this.text.createText(word, this.font);
 
     this.allMots.push(text);
-    console.log(text);
+    // console.log(text);
     let pourcent = 0;
     // this.allMots.forEach((mot, index) => {
     //   // pourcent = index / this.motsDeLaPhrase.length;
@@ -264,17 +264,35 @@ export default class App {
     this.terrainsVisible.forEach((element) => {
       if (element.contains()) terrain = element;
     });
+    // const proportion = Math.abs((terrain.group.position.z - 100) / 200);
     const proportion = Math.abs((terrain.group.position.z - 100) / 200);
+
     console.log("*****", proportion);
+
+    let lineSpacing = this.allMots.length * 0.002; // Adjust this value as needed
+    const spacing = 1 - proportion - lineSpacing;
+    console.log(spacing);
+    let textPosition = terrain.curve.getPointAt(spacing);
+
+    // Determine the z position for the current text line
+    // textPosition.z += lineSpacing * this.allMots.length;
+    // textPosition.x -= lineSpacing * this.allMots.length;
 
     // pourcent = this.pourcentageSurLigne;
     // this.pourcentageSurLigne += 0.02;
     // // console.log(this.pourcentageSurLigne);
-    let textPosition = terrain.curve.getPointAt(1 - proportion);
-    // console.log("text position", textPosition);
-    // text.position.set(textPosition.x - text.size.x / 2, 0, textPosition.z);
 
+    // let positionz = terrain.curve.getPointAt(1 - proportion + 10);
+    // console.log("text position", textPosition);
     text.position.set(textPosition.x - text.size.x / 2, 0, textPosition.z);
+    // const halfTextWidth = text.size.x / 2;
+    // const xPosition = textPosition.x - halfTextWidth;
+
+    // // Set the position of the text
+    // text.position.set(xPosition, textPosition.y, textPosition.z + text.size.z);
+
+    // text.position.x = textPosition.x - text.size.x / 2;
+
     terrain.group.add(text);
 
     // this.terrainsVisible.forEach((terrain) => {

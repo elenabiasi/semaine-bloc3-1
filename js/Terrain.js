@@ -77,7 +77,7 @@ export default class Terrain {
     const json = await this.loadJson("./../assets/SPLINE.json");
     const vectors = [];
     json.points.forEach((point) => {
-      vectors.push(new THREE.Vector3(point.z, point.y + 2, -point.x));
+      vectors.push(new THREE.Vector3(point.z, point.y - 1, -point.x));
     });
     this.curve = new THREE.CatmullRomCurve3(vectors);
     const points = this.curve.getPoints(100);
@@ -149,7 +149,7 @@ export default class Terrain {
 
   update() {
     if (this.active) {
-      this.inc -= 0.05;
+      this.inc -= 0.1;
       this.group.position.z = this.inc;
       // console.log("INC", this.inc);
     }
