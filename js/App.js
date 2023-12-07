@@ -272,6 +272,8 @@ export default class App {
     // // console.log(this.pourcentageSurLigne);
     let textPosition = terrain.curve.getPointAt(1 - proportion);
     // console.log("text position", textPosition);
+    // text.position.set(textPosition.x - text.size.x / 2, 0, textPosition.z);
+
     text.position.set(textPosition.x - text.size.x / 2, 0, textPosition.z);
     terrain.group.add(text);
 
