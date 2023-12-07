@@ -26,15 +26,15 @@ export default class App {
       "arbres.gltf",
     ];
 
-    this.dep = 0;
     this.generalINC = 0;
 
     this.gui = new dat.GUI();
 
-    this.chat = new Chat();
+    this.chat = new Chat(this.scene);
     this.chat.addEventListener("word", this.addWord.bind(this));
     this.chat.addEventListener("speechEnd", this.speechEnd.bind(this));
-    this.chat.addEventListener("gpt_response", this.onResponse.bind(this));
+    this.chat.addEventListener("wordFound", this.wordFoundHandler.bind(this));
+    // this.chat.addEventListener("gpt_response", this.onResponse.bind(this));
 
     // init audio detector
     this.audioDetector = new AudioDetector();
@@ -176,6 +176,13 @@ export default class App {
     this.draw();
   }
 
+  wordFoundHandler(e) {
+    if (e == "bonjour") {
+      this.light.changeLightColor(0xff0000);
+    }
+    console.log("from APp, word FOUND ", e);
+  }
+
   // createShapes(assets) {
   //   for (let i = 0; i < assets.length; i++) {
   //     const model = assets[i].scene;
@@ -304,6 +311,11 @@ export default class App {
     // this.generalINC -= 0.5;
   }
 
+  changeLightColor(color) {
+    console.log(color);
+    this.light.changeLightColor(color);
+  }
+
   onResponse(data) {
     console.log("reponse", data);
     this.motsDeLaPhrase = data.split(" ");
@@ -315,6 +327,18 @@ export default class App {
       content: data.choices[0].message.content,
     });
     this.audioDetector.startRecording();
+
+    const assistantMessage = data.choices[0];
+
+    const isFilmPresent = this.chat.isWordPresent(assistantMessage, "bonjour");
+
+    // Si le mot "film" est présent, changez la couleur de la lumière
+    if (isFilmPresent) {
+      console.log(
+        "Le mot 'Bonjour' a été détecté. Changement de couleur de la lumière."
+      );
+      this.changeLightColor(0xff0000); // Couleur rouge, ajustez selon vos besoins
+    }
   }
 
   onTextReceived(transcript) {
