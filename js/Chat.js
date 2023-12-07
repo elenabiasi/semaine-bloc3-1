@@ -1,12 +1,14 @@
 import Config from "./Config.js";
+import Light from "./light.js";
 import Speech from "speak-tts";
 import EventEmitter from "@onemorestudio/eventemitterjs";
 export default class Chat extends EventEmitter {
-  constructor() {
+  constructor(scene) {
     super();
     this.API_URL = "https://api.openai.com/v1/chat/completions";
     this.API_KEY = Config.OPEN_AI_KEY;
     this.messages = [];
+    this.light = new Light(scene);
     this.context =
       // "Tu es un specialiste sur la culture et l'art contemporain. Et tu me poses des questions. Basé sur mes réponses, tu me poses d'autres questions.Tu fais des question réponses très courtes et succinctes. Commence par me poser une question sur un quelconque sujet culturel.";
       // "Tu es un spécialiste sur le cinema. Et tu me poses des questions. Basé sur mes réponses, tu me poses d'autres questions. Tu fais des question réponses très courtes et succinctes. Commence par me poser une question sur un quelconque sujet cinematographique.";
@@ -24,11 +26,11 @@ export default class Chat extends EventEmitter {
     this.speech
       .init({
         volume: 1,
-        lang: "fr-FR",
+        lang: "fr-CH",
         rate: 0.8,
         pitch: 2,
-        // voice: "Microsoft Guillaume - French (Switzerland)",
-        voice: "Thomas",
+        voice: "Microsoft Guillaume - French (Switzerland)",
+        //voice: "Thomas",
 
         splitSentences: true,
         listeners: {
@@ -79,11 +81,25 @@ export default class Chat extends EventEmitter {
       });
 
       const data = await response.json();
+      const responseContent = data.choices[0].message.content;
+
+      const isTargetWordPresent = this.isWordPresent(responseContent);
+      this.emit("gpt_response", [responseContent]);
+
+      if (isTargetWordPresent != "") {
+        this.emit("wordFound", [isTargetWordPresent]);
+
+        // Changez la couleur de la lumière lorsque le mot "film" est trouvé
+      } else {
+        console.log(
+          `Le mot "${responseContent}" n'a pas été trouvé dans la réponse.`
+        );
+      }
       // ici on attends la réponse de CHAT GPT
       console.log(data.choices[0].message.content);
 
       // on peut envoyer la réponse à l'app dans l'idée de voir si on pourrait générer une image
-      this.emit("gpt_response", [data.choices[0].message.content]);
+      // this.emit("gpt_response", [data.choices[0].message.content]);
       this.activeString = "";
       //on peut faire parler le bot
       this.speech
@@ -111,6 +127,22 @@ export default class Chat extends EventEmitter {
     } catch (error) {
       console.error("Error:", error);
       resultText.innerText = "Error occurred while generating.";
+    }
+  }
+
+  isWordPresent(text) {
+    if (typeof text == "string") {
+      const arrayTarget = ["bonjour", "arbre", "histoire", "personnage"];
+
+      const lowerCaseText = text.toLowerCase();
+
+      for (let i = 0; i < arrayTarget.length; i++) {
+        const isInside = lowerCaseText.includes(arrayTarget[i]);
+        if (isInside) {
+          return arrayTarget[i];
+        }
+      }
+      return "";
     }
   }
 
