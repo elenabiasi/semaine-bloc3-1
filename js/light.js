@@ -13,29 +13,38 @@ export default class Light {
     // console.log(ambientLight);
 
     this.hemiLight = new THREE.HemisphereLight(
-      "rgb(255, 218, 207)",
-      "rgb(107, 118, 155)",
-      0.5
+      "rgb(117, 133, 155)",
+      "rgb(155, 118, 107)",
+      1.5
     );
 
     this.scene.add(this.hemiLight);
 
-    this.directionalLight = new THREE.DirectionalLight("rgb(207, 218, 255)", 2);
-    this.scene.add(this.directionalLight);
+    this.directionalLight = new THREE.DirectionalLight(
+      "rgb(228, 229, 231)",
+      4.5
+    );
+    this.directionalLight.target.position.set(0, 0, 0);
 
-    this.directionalLight.shadow;
-
-    this.directionalLight.position.set(1, 1, 0);
+    this.directionalLight.position.set(200, 300, 200);
     this.directionalLight.castShadow = true;
+    this.directionalLight.distance = 500;
 
-    this.directionalLight.shadow.mapSize.width = 4096; // default
-    this.directionalLight.shadow.mapSize.height = 4096; // default
-    this.directionalLight.shadow.camera.near = 500; // default
-    this.directionalLight.shadow.camera.far = 1000; // default
+    this.directionalLight.shadow.camera.left = -100;
+    this.directionalLight.shadow.camera.right = 100;
+    this.directionalLight.shadow.camera.top = 100;
+    this.directionalLight.shadow.camera.bottom = -100;
+    this.directionalLight.shadow.mapSize.width = 4096;
+    this.directionalLight.shadow.mapSize.height = 4096;
+
+    this.scene.add(this.directionalLight, this.directionalLight.target);
 
     this.directionalLightHelper = new THREE.DirectionalLightHelper(
-      this.directionalLight
+      this.directionalLight,
+      5
     );
+
+    this.directionalLight.add(this.directionalLightHelper);
 
     //create spotlight
     this.spotLight = new THREE.SpotLight(0xffffff, 200);
@@ -45,10 +54,10 @@ export default class Light {
     this.spotLight.shadow.mapSize.width = 4096;
     this.spotLight.shadow.mapSize.height = 4096;
 
-    this.scene.add(this.spotLight);
+    // this.scene.add(this.spotLight);
 
     this.spotLightHelper = new THREE.SpotLightHelper(this.spotLight);
-    this.scene.add(this.spotLightHelper);
+    // this.scene.add(this.spotLightHelper);
   }
 
   update() {
@@ -59,8 +68,8 @@ export default class Light {
   gui(gui) {
     const folder = gui.addFolder("Light");
     folder.add(this.spotLight, "intensity", 0, 2000, 0.01);
-    folder.add(this.directionalLight, "intensity", 0, 30, 0.01);
-    folder.add(this.hemiLight, "intensity", 0, 30, 0.01);
+    folder.add(this.directionalLight, "intensity", 1, 10, 0.01);
+    folder.add(this.hemiLight, "intensity", 1, 10, 0.01);
 
     folder.add(this.spotLight, "angle", 0, Math.PI / 3, 0.01);
     folder.add(this.spotLight.position, "x", -10, 10, 0.001);
@@ -69,7 +78,6 @@ export default class Light {
     //change color
     // folder.add(this.spotLight.color, "color");
     //penumbra
-    folder.add(this.spotLight, "penumbra", 0, 1, 0.01);
     //distance
     folder.add(this.spotLight, "distance", 0, 100, 0.01);
 

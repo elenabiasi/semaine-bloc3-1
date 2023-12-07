@@ -63,15 +63,22 @@ export default class App {
       0.1,
       1000
     );
-    // Set camera position
-    this.camera.position.z = 20;
-    this.camera.position.y = 9;
-    this.camera.position.x = -20;
+    this.camera.position.z = 30;
+    this.camera.position.y = 35;
+    this.camera.position.x = -30;
+    this.camera.rotation.x = 0;
+    this.camera.rotation.y = 0;
+    this.camera.rotation.z = 0;
+
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-    this.gui.add(this.camera.position, "z", -2000, 2000).step(0.1);
-    this.gui.add(this.camera.position, "y", -2000, 2000).step(0.1);
-    this.gui.add(this.camera.position, "x", -2000, 2000).step(0.1);
+    this.gui.add(this.camera.position, "z", -30, 30).step(0.1);
+    this.gui.add(this.camera.position, "y", 0, 30).step(0.1);
+    this.gui.add(this.camera.position, "x", -30, 30).step(0.1);
+
+    this.gui.add(this.camera.rotation, "z", -Math.PI, Math.PI).step(0.1);
+    this.gui.add(this.camera.rotation, "y", -Math.PI, Math.PI).step(0.1);
+    this.gui.add(this.camera.rotation, "x", -Math.PI, Math.PI).step(0.1);
 
     // Create a renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
