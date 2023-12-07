@@ -14,28 +14,29 @@ export default class Light {
 
     this.hemiLight = new THREE.HemisphereLight(
       "rgb(117, 133, 155)",
-      "rgb(155, 118, 107)",
-      1.5
+      "rgb(120, 100, 100)",
+      4
     );
 
     this.scene.add(this.hemiLight);
 
-    this.directionalLight = new THREE.DirectionalLight(
-      "rgb(228, 229, 231)",
-      4.5
-    );
+    this.directionalLight = new THREE.DirectionalLight("rgb(228, 229, 231)", 4);
     this.directionalLight.target.position.set(0, 0, 0);
 
     this.directionalLight.position.set(200, 300, 200);
     this.directionalLight.castShadow = true;
     this.directionalLight.distance = 500;
 
-    this.directionalLight.shadow.camera.left = -100;
-    this.directionalLight.shadow.camera.right = 100;
-    this.directionalLight.shadow.camera.top = 100;
-    this.directionalLight.shadow.camera.bottom = -100;
+    this.directionalLight.shadow.camera.left = -200;
+    this.directionalLight.shadow.camera.right = 200;
+    this.directionalLight.shadow.camera.top = 200;
+    this.directionalLight.shadow.camera.bottom = -200;
     this.directionalLight.shadow.mapSize.width = 4096;
     this.directionalLight.shadow.mapSize.height = 4096;
+    // this.directionalLight.shadow.camera.near = 10;
+    // this.directionalLight.shadow.camera.far = -100;
+    this.directionalLight.shadow.normalBias = 0.5;
+    // this.directionalLight.shadow.bias = -0.0001;
 
     this.scene.add(this.directionalLight, this.directionalLight.target);
 
