@@ -117,7 +117,7 @@ export default class App {
       this.addTerrain(100);
     });
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 12; i++) {
       const t = new Terrain(this.scene);
       this.terrains.push(t);
     }
