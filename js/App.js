@@ -117,7 +117,7 @@ export default class App {
       this.addTerrain(100);
     });
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 10; i++) {
       const t = new Terrain(this.scene);
       this.terrains.push(t);
     }
@@ -195,7 +195,7 @@ export default class App {
   }
 
   wordFoundHandler(e) {
-    if (e == "fin") {
+    if (e === "fin") {
       this.light.changeLightColor(0xff00f7, 10000, 3.5, 100, 0);
       this.camera.position.y = 50;
       this.camera.position.z = 0;
