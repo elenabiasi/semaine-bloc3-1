@@ -149,7 +149,7 @@ export default class Terrain {
 
   update() {
     if (this.active) {
-      this.inc -= 0.19;
+      this.inc -= 0.15;
       this.group.position.z = this.inc;
       // console.log("INC", this.inc);
     }

@@ -28,7 +28,7 @@ export default class App {
 
     this.generalINC = 0;
 
-    this.gui = new dat.GUI();
+    //this.gui = new dat.GUI();
 
     this.chat = new Chat(this.scene);
     this.chat.addEventListener("word", this.addWord.bind(this));
@@ -57,6 +57,9 @@ export default class App {
     // Create a scene
     this.scene = new THREE.Scene();
     // Create a camera
+
+    this.scene.background = new THREE.Color(0x041829);
+
     this.camera = new THREE.PerspectiveCamera(
       49,
       window.innerWidth / window.innerHeight,
@@ -64,22 +67,22 @@ export default class App {
       1000
     );
 
-    this.camera.position.z = 16;
-    this.camera.position.y = 30;
-    this.camera.position.x = -22.3;
+    this.camera.position.z = 14;
+    this.camera.position.y = 15;
+    this.camera.position.x = -21;
     this.camera.rotation.x = 0;
     this.camera.rotation.y = 0;
     this.camera.rotation.z = 0;
 
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-    this.gui.add(this.camera.position, "z", -30, 30).step(0.1);
-    this.gui.add(this.camera.position, "y", 0, 30).step(0.1);
-    this.gui.add(this.camera.position, "x", -30, 30).step(0.1);
+    // this.gui.add(this.camera.position, "z", -30, 30).step(0.1);
+    // this.gui.add(this.camera.position, "y", 0, 30).step(0.1);
+    // this.gui.add(this.camera.position, "x", -30, 30).step(0.1);
 
-    this.gui.add(this.camera.rotation, "z", -Math.PI, Math.PI).step(0.1);
-    this.gui.add(this.camera.rotation, "y", -Math.PI, Math.PI).step(0.1);
-    this.gui.add(this.camera.rotation, "x", -Math.PI, Math.PI).step(0.1);
+    // this.gui.add(this.camera.rotation, "z", -Math.PI, Math.PI).step(0.1);
+    // this.gui.add(this.camera.rotation, "y", -Math.PI, Math.PI).step(0.1);
+    // this.gui.add(this.camera.rotation, "x", -Math.PI, Math.PI).step(0.1);
 
     // Create a renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -101,7 +104,20 @@ export default class App {
     this.terrains = [];
     this.terrainsVisible = [];
 
-    for (let i = 0; i < 50; i++) {
+    const assetsManager = new loadObjManager(this.assetsArray);
+    assetsManager.loadAllAssets().then((res) => {
+      // this.all_assets = res;
+      // this.addTerrain();
+      this.terrains.forEach((terrain) => {
+        terrain.createShapes(res);
+        terrain.group.position.z = 500;
+      });
+      // this.addTerrainFirst(0);
+      this.addTerrain(-100);
+      this.addTerrain(100);
+    });
+
+    for (let i = 0; i < 6; i++) {
       const t = new Terrain(this.scene);
       this.terrains.push(t);
     }
@@ -130,26 +146,13 @@ export default class App {
     // Create a light
     this.light = new Light(this.scene);
     this.light.createLight();
-    this.light.gui(this.gui);
+    //this.light.gui(this.gui);
 
     // this.light = new THREE.HemisphereLight(0xffffff, 0x4040ff, 1.0);
     // this.scene.add(this.light);
 
     // Create a floor
     // shape.createFloor();
-
-    const assetsManager = new loadObjManager(this.assetsArray);
-    assetsManager.loadAllAssets().then((res) => {
-      // this.all_assets = res;
-      // this.addTerrain();
-      this.terrains.forEach((terrain) => {
-        terrain.createShapes(res);
-        terrain.group.position.z = 500;
-      });
-      // this.addTerrainFirst(0);
-      this.addTerrain(-100);
-      this.addTerrain(100);
-    });
 
     // Create a text
     this.text = new Text(this.scene);
@@ -168,8 +171,23 @@ export default class App {
     // }, 2000);
     this.allMots = [];
 
-    addEventListener("keydown", (e) => {
-      if (e.key === "w") this.chat.call(this.chat.context);
+    const info = document.getElementById("info");
+
+    info.addEventListener("click", () => {
+      this.chat.call(this.chat.context);
+      info.style.display = "none";
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "w") {
+        console.log("space");
+
+        this.light.changeLightColor(0xff00f7, 10000, 3.5, 100, 0);
+        this.camera.position.y = 50;
+        this.camera.position.z = 0;
+        this.camera.position.x = 0;
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+      }
     });
 
     //
@@ -178,8 +196,8 @@ export default class App {
 
   wordFoundHandler(e) {
     if (e == "fin") {
-      this.light.changeLightColor(0xff0000);
-      this.camera.position.y = 100;
+      this.light.changeLightColor(0xff00f7, 10000, 3.5, 100, 0);
+      this.camera.position.y = 50;
       this.camera.position.z = 0;
       this.camera.position.x = 0;
       this.camera.lookAt(new THREE.Vector3(0, 0, 0));

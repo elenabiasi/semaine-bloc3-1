@@ -1,7 +1,30 @@
+@font-face {
+  font-family: Fredoka;
+  src: url(/FredokaOne-Regular.ttf);
+}
+
 body {
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+}
+
+#info {
+  cursor: pointer;
+  font-size: 3vw;
+  font-family: Fredoka;
+
+  position: absolute;
+  top: 50%;
+
+  width: 100%;
+  text-align: center;
+  z-index: 100;
+  display: block;
+
+  color: white;
+
+  text-shadow: 3px 6px 6px#27499e;
 }

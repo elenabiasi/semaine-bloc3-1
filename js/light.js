@@ -15,12 +15,15 @@ export default class Light {
     this.hemiLight = new THREE.HemisphereLight(
       "rgb(117, 133, 155)",
       "rgb(120, 100, 100)",
-      4
+      3
     );
 
     this.scene.add(this.hemiLight);
 
-    this.directionalLight = new THREE.DirectionalLight("rgb(228, 229, 231)", 4);
+    this.directionalLight = new THREE.DirectionalLight(
+      "rgb(228, 229, 231)",
+      2.5
+    );
     this.directionalLight.target.position.set(0, 0, 0);
 
     this.directionalLight.position.set(200, 300, 200);
@@ -48,16 +51,33 @@ export default class Light {
     this.directionalLight.add(this.directionalLightHelper);
 
     //create spotlight
-    this.spotLight = new THREE.SpotLight(0xffffff, 200);
-    this.spotLight.position.set(3, 5, 0);
+    this.spotLight = new THREE.SpotLight(0xff9500, 500);
+    this.spotLight.position.set(0, 10, 0);
     //create Shadows
     this.spotLight.castShadow = true;
     this.spotLight.shadow.mapSize.width = 4096;
     this.spotLight.shadow.mapSize.height = 4096;
+    this.spotLight.shadow.normalBias = 0.5;
+    this.spotLight.penumbra = 0.5;
+    this.spotLight.distance = 20;
 
-    // this.scene.add(this.spotLight);
+    this.scene.add(this.spotLight);
 
     this.spotLightHelper = new THREE.SpotLightHelper(this.spotLight);
+
+    this.spotLight2 = new THREE.SpotLight(0x9500ff, 3000);
+    // this.spotLight = new THREE.SpotLight(0x0000ff, 2000);
+
+    this.spotLight2.position.set(4, 40, -2.3);
+
+    //create Shadows
+    this.spotLight2.castShadow = true;
+    this.spotLight2.shadow.mapSize.width = 3096;
+    this.spotLight2.shadow.mapSize.height = 3096;
+    this.spotLight2.penumbra = 0.5;
+    this.spotLight2.distance = 100;
+
+    this.scene.add(this.spotLight2);
     // this.scene.add(this.spotLightHelper);
   }
 
@@ -79,13 +99,19 @@ export default class Light {
     //change color
     // folder.add(this.spotLight.color, "color");
     //penumbra
+
     //distance
     folder.add(this.spotLight, "distance", 0, 100, 0.01);
 
     folder.open();
   }
 
-  changeLightColor(color) {
-    this.directionalLight.color.setHex(color);
+  changeLightColor(color, int, int2, int3, penu) {
+    //this.directionalLight.color.setHex(color);
+    this.spotLight2.color.setHex(color);
+    this.spotLight2.intensity = int;
+    this.directionalLight.intensity = int2;
+    this.spotLight.intensity = int3;
+    this.spotLight.penumbra = penu;
   }
 }
